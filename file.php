@@ -80,7 +80,7 @@ class Files
     public function getFormatLine()
     {
         if(($line = fgets($this->formatFile)) == FALSE)
-            return FALSE
+            return FALSE;
         else
             return $line;
     }
