@@ -14,7 +14,7 @@ define("ERR_OUTPUT",3);
 define("ERR_FORMAT_LINE",4);
 
 require_once('file.php');
-require_once('syntax.php');
+require_once('parser.php');
 
 $files = new Files($argv);
 
@@ -28,14 +28,15 @@ catch (Exception $e)
     exit ($e->getCode());
 }
 
-$syntaxHighliter = new SyntaxHighlite();
+$parser = new Parser();
 
 try
 {
     while(($syntaxLine = $files->getFormatLine()) != FALSE)
     {
-        $syntaxHighliter->addFormatLine($syntaxLine);
+        $parser->addFormatLine($syntaxLine);
     }
+    var_dump($parser->arrayOfCommands);
 }
 catch (Exception $e)
 {
@@ -43,6 +44,7 @@ catch (Exception $e)
     exit ($e->getCode());
 }
 
+$files->closeFiles();
 exit(ERR_OK);
 
 ?>

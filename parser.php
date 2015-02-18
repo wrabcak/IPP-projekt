@@ -1,6 +1,6 @@
 <?php
 
-class SyntaxHighlite
+class Parser
 {
     private  $availableCommands = array('bold','italic','underline','teletype','size','color');
 
@@ -61,7 +61,6 @@ class SyntaxHighlite
         $iteration = 0;
         while($iteration < strlen($schoolRegex))
         {
-            var_dump($finalRegex[$iteration]);
             switch($state)
             {
                 case SSTART:
