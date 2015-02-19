@@ -15,6 +15,7 @@ define("ERR_FORMAT_LINE",4);
 
 require_once('file.php');
 require_once('parser.php');
+require_once('syntax.php');
 
 $files = new Files($argv);
 
@@ -36,13 +37,18 @@ try
     {
         $parser->addFormatLine($syntaxLine);
     }
-    var_dump($parser->arrayOfCommands);
 }
 catch (Exception $e)
 {
     echo $e->getMessage();
     exit ($e->getCode());
 }
+
+$db = $parser->getDB();
+$input = $files->getInput();
+$syntax = new Syntax($db,$input);
+
+$syntax->apply();
 
 $files->closeFiles();
 exit(ERR_OK);
