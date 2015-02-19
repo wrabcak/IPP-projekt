@@ -4,7 +4,7 @@ class Parser
 {
     private  $availableCommands = array('bold','italic','underline','teletype','size','color');
 
-    public $arrayOfCommands = array();
+    private $arrayOfCommands = array();
 
     const SSTART = 0;
     const SESCAPE = 1;
@@ -27,8 +27,13 @@ class Parser
         if(count($match) == 0)
             throw new Exception('ERROR WRONG FORMAT LINE!',ERR_FORMAT_LINE);
 
-        array_push($this->arrayOfCommands,array('Regex'=>$this->parseFormatRegex($match[1]),'Commnand'=>$this->parseFormatCommand($match[2])));
+        array_push($this->arrayOfCommands,array('Regex'=>$this->parseFormatRegex($match[1]),'Command'=>$this->parseFormatCommand($match[2])));
 
+    }
+
+    public function getDB()
+    {
+        return $this->arrayOfCommands;
     }
 
     private function parseFormatCommand($formatLine)
