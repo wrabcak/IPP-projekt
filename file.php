@@ -85,6 +85,15 @@ class Files
             return $line;
     }
 
+    public function getInput()
+    {
+        $output = '';
+        while(($line = fgets($this->inputFile)) != FALSE)
+            $output = $output . $line;
+
+        return $output;
+    }
+
     public function closeFiles()
     {
         if($this->outputFile != NULL)
