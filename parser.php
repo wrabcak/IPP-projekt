@@ -1,21 +1,21 @@
 <?php
 
+define('SSTART',0);
+define('SESCAPE',1);
+define('SCHAR',2);
+define('SDOT',3);
+define('SITER',4);
+define('SOR',5);
+define('SBRACKET',6);
+define('SBRACLOSE',7);
+define('SPITER',8);
+define('SNOT',9);
+
 class Parser
 {
     private  $availableCommands = array('bold','italic','underline','teletype','size','color');
 
     private $arrayOfCommands = array();
-
-    const SSTART = 0;
-    const SESCAPE = 1;
-    const SCHAR = 2;
-    const SDOT = 3;
-    const SITER = 4;
-    const SOR = 5;
-    const SBRACKET = 6;
-    const SBRACLOSE = 7;
-    CONST SPITER = 8;
-    CONST SNOT = 9;
 
     public function addFormatLine($syntaxLine)
     {
@@ -46,11 +46,13 @@ class Parser
             $splitCommand = split(':',$command);
             if(!in_array($splitCommand[0],$this->availableCommands))
                  throw new Exception('ERROR WRONG FORMAT LINE!',ERR_FORMAT_LINE);
-            if($splitCommand[1] == 'size' || $splitCommand[1] == 'color')
+            if($splitCommand[0] == 'size')
             {
                 if(!($splitCommand[1] <= 7 && $splitCommand[1] >= 1))
                     throw new Exception('ERROR WRONG FORMAT LINE!',ERR_FORMAT_LINE);
-
+            }
+            if($splitCommand[0] == 'color')
+            {
                 if(!(ctype_xdigit($splitCommand[1])))
                     throw new Exception('ERROR WRONG FORMAT LINE!',ERR_FORMAT_LINE);
             }
@@ -135,7 +137,7 @@ class Parser
                         $finalRegex = $finalRegex . $schoolRegex[$iteration];
                         $state = SBRACLOSE;
                     }
-                    elseif ($school[$iteration] == '+')
+                    elseif ($schoolRegex[$iteration] == '+')
                     {
                         $finalRegex = $finalRegex . $schoolRegex[$iteration];
                         $state = SPITER;
