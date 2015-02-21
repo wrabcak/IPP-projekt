@@ -1,0 +1,2 @@
+PHP Warning:  fopen(./nonexistent): failed to open stream: No such file or directory in /home/lvrabec/school/proj1-SYN-IPP/test/my_results/file.php on line 46
+ERROR WRONG INPUT FILE!
