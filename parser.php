@@ -397,6 +397,6 @@ class Parser
             return NULL;
 
         return $finalRegex;
-    } //funkcia
-}//trieda
+    }
+}
 ?>

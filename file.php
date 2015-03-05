@@ -120,7 +120,13 @@ class Help
 {
     public function printHelp()
     {
-        echo "HELP";
+        print "IPP SYN PROJECT 2014/2015.\n";
+        print "usage: php ./syn.php <--help> <--input={file}> <--output={file}> <--format={file} <--br>\n";
+        print "--help              This help page.\n";
+        print "--br                Add new line on end of each line. \n";
+        print "--input={FILE}      Input file. \n";
+        print "--output={FILE}     Output file. \n";
+        print "--format={FILE}     Format file. \n";
     }
 }
 
