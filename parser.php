@@ -3,13 +3,13 @@
 define('SSTART',0);
 define('SESCAPE',1);
 define('SCHAR',2);
-define('SDOT',3);
-define('SITER',4);
+define('SAND',3);
+define('SADD',4);
 define('SOR',5);
 define('SBRACKET',6);
 define('SBRACLOSE',7);
-define('SPITER',8);
-define('SNOT',9);
+define('SMULTI',8);
+define('SNEG',9);
 
 /*
  * Class for parsing format lines
@@ -101,6 +101,8 @@ class Parser
         $state = SSTART; // init FSM by start state
         $iteration = 0;
 
+        // if 1 then fsm can end with this state, else exit with NULL
+        $end_state = 0;
 
         // go through every char in ifj regex and convert it to php regex
         while($iteration < strlen($schoolRegex))
@@ -110,7 +112,7 @@ class Parser
                 case SSTART:
                 case SBRACKET:
                 case SOR:
-                case SDOT:
+                case SAND:
                     if ($schoolRegex[$iteration] == '.' || $schoolRegex[$iteration] == '|' || $schoolRegex[$iteration] == '*' || $schoolRegex[$iteration] == '+' || $schoolRegex[$iteration] == ')')
                     {
                         return null;
@@ -118,29 +120,35 @@ class Parser
                     elseif($schoolRegex[$iteration] == '!')
                     {
                         $finalRegex = $finalRegex . '[^';
-                        $state = SNOT;
+                        $state = SNEG;
+                        $end_state = 0;
                     }
 
                     elseif($schoolRegex[$iteration] == '%')
                     {
                         $finalRegex = $finalRegex . '[';
                         $state = SESCAPE;
+                        $end_state = 0;
                     }
 
                     elseif($schoolRegex[$iteration] == '(')
                     {
                         $finalRegex = $finalRegex . $schoolRegex[$iteration];
                         $state = SBRACKET;
+                        $end_state = 0;
                     }
+
                     elseif($schoolRegex[$iteration] == '?' || $schoolRegex[$iteration] == '{' || $schoolRegex[$iteration] == '}' || $schoolRegex[$iteration] == '/' || $schoolRegex[$iteration] == '^' || $schoolRegex[$iteration] == '\\' || $schoolRegex[$iteration] == '$' || $schoolRegex[$iteration] == '[' || $schoolRegex[$iteration] == ']')
                     {
                         $finalRegex = $finalRegex . '\\' . $schoolRegex[$iteration];
                         $state = SCHAR;
+                        $end_state = 1;
                     }
                     elseif(ord($schoolRegex[$iteration])>=32)
                     {
                         $finalRegex = $finalRegex . $schoolRegex[$iteration];
                         $state = SCHAR;
+                        $end_state = 1;
                     }
                     else
                         return NULL;
@@ -150,68 +158,75 @@ class Parser
                 case SBRACLOSE:
                     if ($schoolRegex[$iteration] == '.')
                     {
-                        $state = SDOT;
+                        $state = SAND;
+                        $end_state = 0;
                     }
 
                     elseif ($schoolRegex[$iteration] == '%')
                     {
                         $finalRegex = $finalRegex . '[';
                         $state = SESCAPE;
+                        $end_state = 0;
                     }
                     elseif ($schoolRegex[$iteration] == '!')
                     {
                         $finalRegex = $finalRegex . '[^';
-                        $state = SNOT;
+                        $state = SNEG;
+                        $end_state = 0;
                     }
 
                     elseif ($schoolRegex[$iteration] == '(')
                     {
                         $finalRegex = $finalRegex . $schoolRegex[$iteration];
                         $state = SBRACKET;
+                        $end_state = 0;
                     }
                     elseif ($schoolRegex[$iteration] == ')')
                     {
                         $finalRegex = $finalRegex . $schoolRegex[$iteration];
                         $state = SBRACLOSE;
+                        $end_state = 1;
                     }
                     elseif ($schoolRegex[$iteration] == '+')
                     {
                         $finalRegex = $finalRegex . $schoolRegex[$iteration];
-                        $state = SPITER;
+                        $state = SMULTI;
+                        $end_state = 1;
                     }
                     elseif ($schoolRegex[$iteration] == '*')
                     {
                         $finalRegex = $finalRegex . $schoolRegex[$iteration];
-                        $state = SITER;
+                        $state = SADD;
+                        $end_state = 1;
                     }
                     elseif ($schoolRegex[$iteration] == '|')
                     {
                         $finalRegex = $finalRegex . $schoolRegex[$iteration];
-                        $state = SITER;
+                        $state = SADD;
+                        $end_state = 1;
                     }
                     elseif($schoolRegex[$iteration] == '?' || $schoolRegex[$iteration] == '{' || $schoolRegex[$iteration] == '}' || $schoolRegex[$iteration] == '/' || $schoolRegex[$iteration] == '^' || $schoolRegex[$iteration] == '\\' || $schoolRegex[$iteration] == '$' || $schoolRegex[$iteration] == '[' || $schoolRegex[$iteration] == ']')
                     {
                         $finalRegex = $finalRegex . '\\' . $schoolRegex[$iteration];
                         $state = SCHAR;
+                        $end_state = 1;
                     }
                     elseif(ord($schoolRegex[$iteration])>=32)
                     {
                         $finalRegex = $finalRegex . $schoolRegex[$iteration];
                         $state = SCHAR;
+                        $end_state = 1;
                     }
                     else
                         return NULL;
                     break;
 
-                case SNOT:
-                    //if ($schoolRegex[$iteration] == '.' || $schoolRegex[$iteration] == '|' || $schoolRegex[$iteration] == '*' || $schoolRegex[$iteration] == '+' || $schoolRegex[$iteration] == ')')
-                    //{
-                    //    return null;
-                    //}
+                case SNEG:
 
-                    elseif ($schoolRegex[$iteration] == '%')
+                    if ($schoolRegex[$iteration] == '%')
                     {
                         $state = SESCAPE;
+                        $end_state = 0;
                     }
 
                     elseif ($schoolRegex[$iteration] == '.' || $schoolRegex[$iteration] == '*' || $schoolRegex[$iteration] == '+' || $schoolRegex[$iteration] == '!' || $schoolRegex[$iteration] == '|' || $schoolRegex[$iteration] == '(' || $schoolRegex[$iteration] == ')')
@@ -223,6 +238,7 @@ class Parser
                     {
                         $finalRegex = $finalRegex . $schoolRegex[$iteration] . ']';
                         $state = SCHAR;
+                        $end_state = 1;
                         break;
                     }
                     else
@@ -300,119 +316,140 @@ class Parser
                    }
                    else
                        return NULL;
-                   $state = SCHAR;
                    $finalRegex = $finalRegex . ']';
+                   $state = SCHAR;
+                   $end_state = 1;
                    break;
 
-                case SITER:
+                case SADD:
                     if ($schoolRegex[$iteration] == '.')
                     {
-                        $state = SDOT;
+                        $state = SAND;
+                        $end_state = 0;
                     }
 
                     elseif ($schoolRegex[$iteration] == '%')
                     {
                         $finalRegex = $finalRegex . '[';
                         $state = SESCAPE;
+                        $end_state = 0;
                     }
                     elseif ($schoolRegex[$iteration] == '!')
                     {
                         $finalRegex = $finalRegex . '[^';
-                        $state = SNOT;
+                        $state = SNEG;
+                        $end_state = 0;
                     }
 
                     elseif ($schoolRegex[$iteration] == '(')
                     {
                         $finalRegex = $finalRegex . $school[$iteration];
                         $state = SBRACKET;
+                        $end_state = 0;
                     }
                     elseif ($schoolRegex[$iteration] == ')')
                     {
                         $finalRegex = $finalRegex . $schoolRegex[$iteration];
                         $state = SBRACLOSE;
+                        $end_state = 1;
                     }
                     elseif ($schoolRegex[$iteration] == '+')
                     {
                         $finalRegex[strlen($finalRegex)-1] = '*';
-                        $state = SPITER;
+                        $state = SMULTI;
+                        $end_state = 1;
                     }
                     elseif ($schoolRegex[$iteration] == '*')
                     {
                         $finalRegex[strlen($finalRegex)-1] = '*';
-                        $state = SPITER;
+                        $state = SMULTI;
+                        $end_state = 1;
                     }
                     elseif ($schoolRegex[$iteration] == '|')
                     {
                         $finalRegex = $finalRegex . $schoolRegex[$iteration];
-                        $state = SITER;
+                        $state = SADD;
+                        $end_state = 1;
                     }
                     elseif($schoolRegex[$iteration] == '?' || $schoolRegex[$iteration] == '{' || $schoolRegex[$iteration] == '}' || $schoolRegex[$iteration] == '/' || $schoolRegex[$iteration] == '^' || $schoolRegex[$iteration] == '\\' || $schoolRegex[$iteration] == '$' || $schoolRegex[$iteration] == '[' || $schoolRegex[$iteration] == ']')
                     {
                         $finalRegex = $finalRegex . '\\' . $schoolRegex[$iteration];
                         $state = SCHAR;
+                        $end_state = 1;
                         break;
                     }
                     elseif(ord($schoolRegex[$iteration])>=32)
                     {
                         $finalRegex = $finalRegex . $schoolRegex[$iteration];
                         $state = SCHAR;
+                        $end_state = 1;
                         break;
                     }
                     else
                         return NULL;
                     break;
 
-                case SPITER:
+                case SMULTI:
                     if ($schoolRegex[$iteration] == '.')
                     {
-                        $state = SDOT;
+                        $state = SAND;
+                        $end_state = 0;
                     }
 
                     elseif ($schoolRegex[$iteration] == '%')
                     {
                         $finalRegex = $finalRegex . '[';
                         $state = SESCAPE;
+                        $end_state = 0;
                     }
                     elseif ($schoolRegex[$iteration] == '!')
                     {
                         $finalRegex = $finalRegex . '[^';
-                        $state = SNOT;
+                        $state = SNEG;
+                        $end_state = 0;
                     }
 
                     elseif ($schoolRegex[$iteration] == '(')
                     {
                         $finalRegex = $finalRegex . $schoolRegex[$iteration];
                         $state = SBRACKET;
+                        $end_state = 0;
                     }
                     elseif ($schoolRegex[$iteration] == ')')
                     {
                         $finalRegex = $finalRegex . $schoolRegex[$iteration];
                         $state = SBRACLOSE;
+                        $end_state = 1;
                     }
                     elseif ($schoolRegex[$iteration] == '+')
                     {
-                        $state = SPITER;
+                        $state = SMULTI;
+                        $end_state = 1;
                     }
                     elseif ($schoolRegex[$iteration] == '*')
                     {
                         $finalRegex[strlen($finalRegex)-1] = '*';
-                        $state = SPITER;
+                        $state = SMULTI;
+                        $end_state = 1;
                     }
                     elseif ($schoolRegex[$iteration] == '|')
                     {
                         $finalRegex = $finalRegex . $schoolRegex[$iteration];
-                        $state = SITER;
+                        $state = SADD;
+                        $end_state = 1;
                     }
                     elseif($schoolRegex[$iteration] == '?' || $schoolRegex[$iteration] == '{' || $schoolRegex[$iteration] == '}' || $schoolRegex[$iteration] == '/' || $schoolRegex[$iteration] == '^' || $schoolRegex[$iteration] == '\\' || $schoolRegex[$iteration] == '$' || $schoolRegex[$iteration] == '[' || $schoolRegex[$iteration] == ']')
                     {
                         $finalRegex = $finalRegex . '\\' . $schoolRegex[$iteration];
                         $state = SCHAR;
+                        $end_state = 1;
                         break;
                     }
                     elseif(ord($schoolRegex[$iteration])>=32)
                     {
                         $finalRegex = $finalRegex . $schoolRegex[$iteration];
                         $state = SCHAR;
+                        $end_state = 1;
                         break;
                     }
                     else
@@ -422,7 +459,11 @@ class Parser
             $iteration++;
         }
         // if fsm end in one of these states return NULL because of error.
-        if($state == SNOT || $state == SDOT || $state == SBRACKET || $state == SESCAPE || $state == SOR )
+        //if($state == SNEG || $state == SAND || $state == SBRACKET || $state == SESCAPE || $state == SOR )
+        //    return NULL;
+
+        // FSM ended with bad end state, return NULL
+        if($end_state == 0)
             return NULL;
 
         // return final php regex

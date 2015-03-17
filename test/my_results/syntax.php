@@ -1,12 +1,15 @@
 <?php
 
+/*
+ * Syntax class for add html tags to output text.
+ */
 Class Syntax
 {
 
-    private $db;
-    private $input;
-    private $newLine;
-    private $tags=array();
+    private $db; // database with formats
+    private $input; // input text
+    private $newLine; // if newline is 1 add html tag <br> on every new line of input text
+    private $tags=array(); // array of tags
 
     function __construct($db,$input,$newLine)
     {
@@ -15,11 +18,16 @@ Class Syntax
         $this->newLine = $newLine;
     }
 
-    function apply()
+    /*
+     * Method for apply tags to input text.
+     * Return input text also with html tags.
+     */
+    public function apply()
     {
         $match  = array();
         foreach($this->db as $element)
         {
+            // find all strings that match with regex in format database
             preg_match_all('/'.$element['Regex'].'/',$this->input,$match,PREG_OFFSET_CAPTURE);
             foreach($match[0] as $occurred)
             {
@@ -30,18 +38,18 @@ Class Syntax
                     continue;
                 }
 
-                $begin = $occurred[1];
-                $end = strlen($occurred[0]) + $begin;
-                foreach($element['Command'] as $tag)
+                $begin = $occurred[1]; // first position of match
+                $end = strlen($occurred[0]) + $begin; // last position of match
+                foreach($element['Command'] as $tag) 
                 {
                     if($tag[0] == 'underline')
                     {
-                        if(!array_key_exists($begin,$this->tags))
+                        if(!array_key_exists($begin,$this->tags)) // if exists position in tags array add new tag to selected position, dont create new position with this tag
                             $this->tags[$begin] = '<u>';
                         else
                             $this->tags[$begin] = $this->tags[$begin] .'<u>';
 
-                        if(!array_key_exists($end,$this->tags))
+                        if(!array_key_exists($end,$this->tags)) // same as above with end tags
                             $this->tags[$end] = '</u>';
                         else
                             $this->tags[$end] = '</u>' . $this->tags[$end];
@@ -111,14 +119,18 @@ Class Syntax
                 }
             }
         }
-        ksort($this->tags);
+        ksort($this->tags); // sort array by the key from the smallest to the laegests number
 
-        $this->tagsReversed = array_reverse($this->tags,true);
+        $this->tagsReversed = array_reverse($this->tags,true); // reverse tags array
+
+        // adding tags to the input text from end
         foreach($this->tagsReversed as $index => $value)
         {
+            // add tag to the selected position to input text
             $this->input =  substr_replace($this->input, $value, $index, 0);
         }
 
+        // if was selected also --br argument add also '<br>' tag
         if($this->newLine == true)
         {
             $this->addNewLine();
@@ -126,12 +138,18 @@ Class Syntax
 
     }
 
+    /*
+     * This method add '<br>' tag to input text.
+     */
     private function addNewLine()
     {
+        // find newlines
         preg_match_all('/\n/',$this->input,$match,PREG_OFFSET_CAPTURE);
         $match = $match[0];
 
+        // reverse array with positions
         $match = array_reverse($match);
+        // add br tags to input text
         foreach($match as $element)
         {
             $position = $element[1];
@@ -139,6 +157,9 @@ Class Syntax
         }
     }
 
+    /*
+     *  This method return output text with html tags.
+     */
     public function getOutput()
     {
         return $this->input;

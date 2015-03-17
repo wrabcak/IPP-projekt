@@ -1,11 +1,10 @@
 <?php
-/*
-* @Projekt: IPP SYN
-* @Autor: Lukas Vrabec <xvrabe07@stud.fit.vutbr.cz>
-* @file: syn.php
-*/
 
-#error_reporting(0);
+#SYN:xvrabe07
+
+
+//turn off warnings
+error_reporting(0);
 
 define("ERR_OK",0);
 define("ERR_PARAM",1);
@@ -21,6 +20,7 @@ $files = new Files($argv);
 
 try
 {
+    // try to parse parameters
     $files->parseParams();
 }
 catch (Exception $e)
@@ -29,12 +29,15 @@ catch (Exception $e)
     exit ($e->getCode());
 }
 
+// create new object parser
 $parser = new Parser();
 
 try
 {
+    // reading format lines while is not end of file
     while(($syntaxLine = $files->getFormatLine()) != FALSE)
     {
+        // add format line to format database
         $parser->addFormatLine($syntaxLine);
     }
 }
@@ -44,17 +47,31 @@ catch (Exception $e)
     exit ($e->getCode());
 }
 
+// get formated rules
 $db = $parser->getDB();
+
+// get input text
 $input = $files->getInput();
+
+// chech if was param --br set
 $newLine = $files->newLineParam();
+
+// create new object syntax wih parameters
 $syntax = new Syntax($db,$input,$newLine);
 
+// apply rules
 $syntax->apply();
 
+// get output text wit html tags
 $output = $syntax->getOutput();
 
+// print output to the output file
 $files->printOutput($output);
+
+// close fd
 $files->closeFiles();
+
+// return OK
 exit(ERR_OK);
 
 ?>
