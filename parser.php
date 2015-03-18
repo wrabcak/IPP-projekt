@@ -458,9 +458,6 @@ class Parser
             }
             $iteration++;
         }
-        // if fsm end in one of these states return NULL because of error.
-        //if($state == SNEG || $state == SAND || $state == SBRACKET || $state == SESCAPE || $state == SOR )
-        //    return NULL;
 
         // FSM ended with bad end state, return NULL
         if($end_state == 0)
