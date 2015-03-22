@@ -1,6 +1,0 @@
-[^a]	italic
-\n	italic
-\t	italic
-^test$	italic
-a{3}	italic
-a?	italic
