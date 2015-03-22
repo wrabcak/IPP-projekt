@@ -1,0 +1,13 @@
+Archive:  xvrabe07-SYN.zip
+  inflating: file.php                
+  inflating: parser.php              
+  inflating: syn.php                 
+  inflating: syntax.php              
+IPP SYN PROJECT 2014/2015.
+usage: php ./syn.php <--help> <--input={file}> <--output={file}> <--format={file} <--br>
+--help              This help page.
+--br                Add new line on end of each line. 
+--input={FILE}      Input file. 
+--output={FILE}     Output file. 
+--format={FILE}     Format file. 
+dos2unix: converting file syn.php to Unix format ...
