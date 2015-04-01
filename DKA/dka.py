@@ -4,11 +4,16 @@
 
 import sys
 import params
+import parser
 
 param = params.Param(sys.argv)
+
 try:
     param.parse()
-    param.read()
+    parsedParams = param.getParams()
+
+    parser = parser.Parser(param.read(),parsedParams['i'])
+    parser.parsefsm()
 except Exception as e:
     exit(e.args[0])
 

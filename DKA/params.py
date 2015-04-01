@@ -76,6 +76,10 @@ class Param:
         except:
             raise Exception(3)
 
+    def getParams(self):
+        params = {'e' : self.e, 'd' : self.d, 'i' : self.i, 'inputFile': self.inputFile}
+        return params
+
     def read(self):
         if(self.inputFile == False):
             self.inputFile = sys.stdin
