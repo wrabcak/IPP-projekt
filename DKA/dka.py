@@ -13,7 +13,7 @@ try:
     parsedParams = param.getParams()
 
     parser = parser.Parser(param.read(),parsedParams['i'])
-    parser.parsefsm()
+
 except Exception as e:
     exit(e.args[0])
 
