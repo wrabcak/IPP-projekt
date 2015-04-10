@@ -1,2 +1,2 @@
-second script
-TODO: make it!
+2 scripts for IPP project
+
