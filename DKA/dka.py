@@ -16,6 +16,9 @@ try:
     parser = parser.Parser(param.read(),parsedParams['i'])
     parsed = parser.parseFsm()
 
+    if parsed == 2:
+        raise Exception(40)
+
     if parsed == 1:
         fsm = fsm.Fsm(parser.getFsmStates(),parser.getFsmAlphabet(),parser.getFsmRules(),parser.getFsmInitState(),parser.getFsmFinishStates())
         if parsedParams['e'] == True:

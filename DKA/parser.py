@@ -33,14 +33,20 @@ class Parser:
             self.inputFile = self.inputFile.lower()
 
     def __skipWhiteSpaces(self,index):
-        while self.inputFile[index].isspace():
-            index = index + 1
+        try:
+            while self.inputFile[index].isspace():
+                index = index + 1
+        except:
+            raise Exception(40)
         return index
 
     def __skipComments(self,index):
         if self.inputFile[index] == '#':
-            while self.inputFile[index] != '\n':
-                index = index + 1
+            try:
+                while self.inputFile[index] != '\n':
+                    index = index + 1
+            except:
+                raise Exception(40)
             return index+1
         return index
 
@@ -55,15 +61,20 @@ class Parser:
         while(index < fileLength):
             index = self.__skip(index)
             state = re.match('^([a-zA-Z]([a-zA-Z0-9_]*[a-zA-Z0-9])?)',self.inputFile[index:])
+
             if not state:
                 raise Exception(40)
+
             self.__fsmStates.append(state.group(0))
             index = index + len(state.group(0))
+
+            index = self.__skip(index)
 
             if self.inputFile[index] == ',':
                 index = index + 1
                 continue
             index = self.__skip(index)
+
             if self.inputFile[index] == '}':
                 return index
 
@@ -93,9 +104,12 @@ class Parser:
         raise Exception(40)
 
     def __parseInputSymbol(self,symbol):
+
+
+        if symbol[0] == "'" and symbol[1] == "'" and symbol[2] == "'":
+            return "'"
         if symbol[0] == "'" and symbol[1] == "'":
             return 'eps'
-
         if symbol[0] == "'" and symbol[2] == "'":
             return symbol[1]
         else:
@@ -110,6 +124,8 @@ class Parser:
             inputSymbol = self.inputFile[index:index+3]
             symbol = self.__parseInputSymbol(inputSymbol)
 
+            if symbol == "'":
+                self.inputFile = self.inputFile[:index] + self.inputFile[index+1:]
             index = index + len(inputSymbol)
             self.__fsmAlphabet.append(symbol)
 
@@ -148,9 +164,12 @@ class Parser:
                 symbol = 'eps'
             else:
                 inputSymbol = self.inputFile[index:index+3]
-
                 symbol = self.__parseInputSymbol(inputSymbol)
-                if symbol == 'eps':
+
+                if symbol == "'":
+                    self.inputFile = self.inputFile[:index] + self.inputFile[index+1:]
+                    index = index + 3
+                elif symbol == 'eps':
                     index = index + 2
                 else:
                     index = index + len(inputSymbol)
@@ -285,14 +304,24 @@ class Parser:
             raise Exception(40)
 
 
-        #print(self.__fsmStates)
-        #print(self.__fsmAlphabet)
-        #for test in self.__fsmRules:
-        #    print(test.fromState, ' ', test.symbol, ' ', test.toState)
-       # print(self.__fsmInitState)
-       # print(self.__fsmFinishStates)
+        if self.inputFile[index] == '}':
+            index = index + 1
 
-        return 1
+        index = self.__skip(index)
+
+        if self.inputFile[index] == ')':
+            try:
+                while True:
+                    index = index + 1
+                    while self.inputFile[index].isspace():
+                        index = index + 1
+                    if self.inputFile[index] == "#":
+                        while self.inputFile[index] != '\n':
+                            index = index + 1
+                    if self.inputFile[index].isspace() == 0 :
+                        return 2
+            except:
+                    return 1
 
     def getFsmStates(self):
         return self.__fsmStates

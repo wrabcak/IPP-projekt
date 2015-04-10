@@ -128,6 +128,9 @@ class Fsm:
         self.__states = newStates
 
     def write(self,outputHandler):
+        self.__states = list(set(self.__states))
+        self.__alphabet = list(set(self.__alphabet))
+        self.__finishStates = list(set(self.__finishStates))
         outputHandler.write('(\n')
         self.__states.sort()
         outputHandler.write('{')
@@ -142,7 +145,10 @@ class Fsm:
         outputHandler.write('{')
         for alphabet in self.__alphabet:
             outputHandler.write("'")
-            outputHandler.write(alphabet)
+            if alphabet == "'":
+                outputHandler.write("''")
+            else:
+                outputHandler.write(alphabet)
             if alphabet != self.__alphabet[-1]:
                 outputHandler.write("', ")
             else:
@@ -156,6 +162,8 @@ class Fsm:
             outputHandler.write(" '")
             if rule.symbol == 'eps':
                 outputHandler.write("")
+            elif rule.symbol == "'":
+                outputHandler.write("''")
             else:
                 outputHandler.write(rule.symbol)
             outputHandler.write("' ")
