@@ -10,9 +10,7 @@ import fsm
 param = params.Param(sys.argv)
 
 try:
-    parsed = param.parse()
-    if parsed == 'helpmsg':
-        raise Exception(0)
+    param.parse()
     parsedParams = param.getParams()
 
     parser = parser.Parser(param.read(),parsedParams['i'])

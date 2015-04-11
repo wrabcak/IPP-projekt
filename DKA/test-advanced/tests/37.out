@@ -1,0 +1,26 @@
+(
+{qFALSE, s1, s2, s3, s4, s5},
+{'a', 'b', 'c'},
+{
+qFALSE 'a' -> qFALSE,
+qFALSE 'b' -> qFALSE,
+qFALSE 'c' -> qFALSE,
+s1 'a' -> s3,
+s1 'b' -> s2,
+s1 'c' -> qFALSE,
+s2 'a' -> qFALSE,
+s2 'b' -> qFALSE,
+s2 'c' -> s5,
+s3 'a' -> qFALSE,
+s3 'b' -> s4,
+s3 'c' -> s2,
+s4 'a' -> s4,
+s4 'b' -> qFALSE,
+s4 'c' -> qFALSE,
+s5 'a' -> qFALSE,
+s5 'b' -> qFALSE,
+s5 'c' -> qFALSE
+},
+s1,
+{s4, s5}
+)

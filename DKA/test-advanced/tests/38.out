@@ -1,0 +1,17 @@
+(
+{qFALSE, s1, s2},
+{'a', 'b', 'c'},
+{
+qFALSE 'a' -> qFALSE,
+qFALSE 'b' -> qFALSE,
+qFALSE 'c' -> qFALSE,
+s1 'a' -> s2,
+s1 'b' -> qFALSE,
+s1 'c' -> qFALSE,
+s2 'a' -> s2,
+s2 'b' -> s1,
+s2 'c' -> qFALSE
+},
+s1,
+{s2}
+)

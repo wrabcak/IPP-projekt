@@ -1,0 +1,21 @@
+
+({s, s, f}, 
+{'('   ,   ')'   ,  '{'  ,  '}',   '''',  '-', '>', ',', '.', '|', '#', ' '} , 
+{
+s '('->f,
+s ')'->f,
+s '{'->f,
+s '}'->f,
+s ''''->f,
+s '-'->f,
+s '>'->f,
+s ','->f,
+s '.'->f,
+s '|'->f,
+s '#'->f,
+s ' '->f
+},
+# následuje komponenta definující startující stav
+s
+, { f } ) # koncové stavy a ukončené definice automatu
+# zde můuže následovat libovolný počet bílých znaků nebo komentářů

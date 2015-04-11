@@ -1,0 +1,14 @@
+(
+{s, sM, sA, sR, sT, sI, sN},
+{'m','a','r','t','i','n'},
+{
+s 'm' -> sM,
+sM 'a' -> sA,
+sA 'r' -> sR,
+sR 't' -> sT,
+sT 'i' -> sI,
+sI 'n' -> sN
+},
+s,
+{sN}
+)

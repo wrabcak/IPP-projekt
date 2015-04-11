@@ -1,0 +1,16 @@
+(
+{final, final_q1, final_q2, s},
+{'a', 'b', 'c'},
+{
+final 'a' -> final,
+final_q1 'a' -> final,
+final_q1 'b' -> final_q1,
+final_q2 'a' -> final,
+final_q2 'c' -> final_q2,
+s 'a' -> s,
+s 'b' -> final_q1,
+s 'c' -> final_q2
+},
+s,
+{final, final_q1, final_q2}
+)

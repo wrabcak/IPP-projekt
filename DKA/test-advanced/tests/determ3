@@ -1,0 +1,18 @@
+(
+{S,fiNaL,Q1,q2},
+{'A', 'b', 'c'},
+{
+s'a' -> s,
+S'b' -> q1, 
+s'b' -> FinAl, 
+S'C' -> q2, 
+s'c' -> FinaL,
+Q1'b' -> q1, 
+q1'B' -> finAL, 
+q2'C' -> Q2, 
+Q2'c' -> final , 
+finAL'A' -> FINAL
+},
+s,
+{FiNAl}
+)
