@@ -22,7 +22,7 @@ class Param:
 
             if((argument == '--help' or argument == '-h') and len(self.arguments) == 2):
                 PrintHelpMsg()
-                continue
+                return 'helpmsg'
             if((argument == '--help' or argument == '-h') and len(self.arguments) != 2):
                 raise Exception(1)
                 continue
