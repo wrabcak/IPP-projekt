@@ -12,6 +12,12 @@ class Rule:
         self.symbol = symbol
         self.toState = toState
 
+    def __str__(self):
+        return str(self.__dict__)
+
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
+
 class Parser:
     inputFile = False
     caseInsensitive = False
@@ -33,26 +39,21 @@ class Parser:
             self.inputFile = self.inputFile.lower()
 
     def __skipWhiteSpaces(self,index):
-        try:
-            while self.inputFile[index].isspace():
-                index = index + 1
-        except:
-            raise Exception(40)
+        while self.inputFile[index].isspace():
+            index = index + 1
         return index
 
     def __skipComments(self,index):
         if self.inputFile[index] == '#':
-            try:
-                while self.inputFile[index] != '\n':
-                    index = index + 1
-            except:
-                raise Exception(40)
+            while self.inputFile[index] != '\n':
+                index = index + 1
             return index+1
         return index
 
     def __skip(self,index):
-        index = self.__skipWhiteSpaces(index)
-        index = self.__skipComments(index)
+        while self.inputFile[index].isspace() or self.inputFile[index] == '#':
+            index = self.__skipWhiteSpaces(index)
+            index = self.__skipComments(index)
         return index
 
     def __getStates(self,index):
@@ -197,7 +198,6 @@ class Parser:
                 raise Exception(41)
 
             actualRule = Rule(fromState,symbol,toState)
-
             self.__fsmRules.append(actualRule)
 
             index = self.__skip(index)
@@ -296,13 +296,13 @@ class Parser:
         if self.inputFile[index] == '{':
             index = index +1
             index = self.__skip(index)
+
             if self.inputFile[index] == '}':
                 index = index + 1
             else:
                 index = self.__getFinishStates(index)
         else:
             raise Exception(40)
-
 
         if self.inputFile[index] == '}':
             index = index + 1

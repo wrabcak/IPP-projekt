@@ -30,6 +30,8 @@ class Param:
             if(argument == '--no-epsilon-rules' or argument == '-e'):
                 if(self.d == True):
                     raise Exception(1)
+                elif(self.e == True):
+                    raise Exception(1)
                 else:
                     self.e = True
                 continue

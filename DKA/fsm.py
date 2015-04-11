@@ -31,31 +31,30 @@ class Fsm:
             Qj.add(state)
 
             while True:
-                Qi = Qj
+                Qi = set(Qj)
                 for rule in self.__rules:
-                    if rule.fromState == state and rule.symbol == 'eps':
-                        Qi.add(rule.toState)
-                if Qi == Qj:
+                    for state2 in Qi:
+                        if rule.fromState == state2 and rule.symbol == 'eps':
+                            Qj.add(rule.toState)
+                if Qi.issubset(Qj) and Qj.issubset(Qi):
                     break
             self.__closure[state] = Qi
 
     def removeEps(self):
         self.__epsClo()
         newRules = list()
+        newFinishStates = list()
         for state in self.__closure:
             for closure in self.__closure[state]:
-                if closure != state:
-                   for element in self.__rules:
-                       if element.fromState == closure:
-                           newState = parser.Rule(state,element.symbol,element.toState)
-                           self.__rules.append(newState)
-
-        for rule in self.__rules:
-            if rule.symbol != 'eps':
-                newRules.append(rule)
+                for element in self.__rules:
+                    if element.fromState == closure and element.symbol != 'eps':
+                        newState = parser.Rule(state,element.symbol,element.toState)
+                        newRules.append(newState)
+                if self.__closure[state].intersection(self.__finishStates):
+                    newFinishStates.append(state)
 
         self.__rules = newRules
-
+        self.__finishStates = newFinishStates
     def determinize(self):
         dictionary = {}
         for rule in self.__rules:
@@ -99,7 +98,7 @@ class Fsm:
 
                 for symbol, toStates in dictionary[state].items():
                     temporaryRules.setdefault(symbol,set()).update(toStates)
-                #print(temporaryRules)
+
             for symbol, toStates in temporaryRules.items():
                 mergedToStates = '_'.join(sorted(toStates))
                 determinizedRules.setdefault(mergedState,{})[symbol]=mergedToStates
@@ -140,7 +139,6 @@ class Fsm:
                 outputHandler.write(', ')
         outputHandler.write('},\n')
 
-
         self.__alphabet.sort()
         outputHandler.write('{')
         for alphabet in self.__alphabet:
@@ -156,7 +154,14 @@ class Fsm:
         outputHandler.write("},\n")
 
         outputHandler.write('{\n')
+        for rule in self.__rules:
+            if rule.symbol == 'eps':
+                rule.symbol = '0'
         self.__sortRules()
+        self.__removeDupesRules()
+        for rule in self.__rules:
+            if rule.symbol == '0':
+                rule.symbol = 'eps'
         for rule in self.__rules:
             outputHandler.write(rule.fromState)
             outputHandler.write(" '")
@@ -177,6 +182,7 @@ class Fsm:
         outputHandler.write(self.__initState + ',\n')
 
         outputHandler.write('{')
+
         self.__finishStates.sort()
         for state in self.__finishStates:
             outputHandler.write(state)
@@ -185,3 +191,10 @@ class Fsm:
         outputHandler.write('}\n')
 
         outputHandler.write(')')
+
+    def __removeDupesRules(self):
+        dupeRules = list()
+        for rule in self.__rules:
+            if rule not in dupeRules:
+                dupeRules.append(rule)
+        self.__rules = dupeRules
