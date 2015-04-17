@@ -12,7 +12,7 @@ do
         echo -e "${green}Test: $i is [OK]${NC}"
     fi
 done
-for i in {90..92}
+for i in {90..90}
 do
     echo -e "${red}Test: $i${NC}"
     diff test-basic/ref-out/test$i.out test-basic/test$i.out
@@ -21,3 +21,4 @@ do
         echo -e "${green}Test: $i is [OK]${NC}"
     fi
 done
+./test-advanced/check.sh
