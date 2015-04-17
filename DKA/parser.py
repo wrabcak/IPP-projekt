@@ -78,6 +78,8 @@ class Parser:
 
             if self.inputFile[index] == '}':
                 return index
+            else:
+                raise Exception(40)
 
         raise Exception(40)
 
@@ -92,6 +94,9 @@ class Parser:
 
             finishState = match.group(0)
 
+            if finishState not in self.__fsmStates:
+                raise Exception(41)
+
             self.__fsmFinishStates.append(finishState)
             index = index + len(finishState)
 
@@ -101,6 +106,8 @@ class Parser:
             index = self.__skip(index)
             if self.inputFile[index] == '}':
                 return index
+            else:
+                raise Exception(40)
 
         raise Exception(40)
 
@@ -137,6 +144,8 @@ class Parser:
                 continue
             if self.inputFile[index] == '}':
                 return index
+            else:
+                raise Exception(40)
 
         raise Exception(40)
 
@@ -208,6 +217,8 @@ class Parser:
 
             if self.inputFile[index] == '}':
                 return index
+            else:
+                raise Exception(40)
 
     def __getInitState(self,index):
         index = self.__skip(index)
