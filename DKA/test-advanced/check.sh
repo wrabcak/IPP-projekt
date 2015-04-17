@@ -24,20 +24,20 @@ function testdka() {
  fi
  
  if [ $2 -ne 0 ]; then
-   touch ./tests/empty
-   FILE="./tests/empty"
- elif ! [ -f ./tests/$1.out ]; then
+   touch ./test-advanced/tests/empty
+   FILE="./test-advanced/tests/empty"
+ elif ! [ -f ./test-advanced/tests/$1.out ]; then
    echo "${c_red}Mising test out: ./tests/$1.out $c_normal"
    return
  else
-   FILE="./tests/$1.out"
+   FILE="./test-advanced/tests/$1.out"
  fi
- if ! [ -f ./tests/$1 ]; then
+ if ! [ -f ./test-advanced/tests/$1 ]; then
    echo "${c_red}Mising test input: ./tests/$1 $c_normal"
    return
  fi
  
- $INTERPRET $TASK --input=./tests/$1 --output=./tests/$1.tmp $3 2>/dev/null
+ $INTERPRET $TASK --input=./test-advanced/tests/$1 --output=./test-advanced/tests/$1.tmp $3 2>/dev/null
  rcode=$?
  cnt=$[$cnt+1]
  fail=0;
@@ -54,15 +54,15 @@ function testdka() {
 
    # kontrola vystupniho souboru
  if [ $2 -eq 0 ]; then
-  if diff -q ./tests/$1.tmp $FILE > /dev/null; then
+  if diff -q ./test-advanced/tests/$1.tmp $FILE > /dev/null; then
     printf " + OUTPUT: ${c_green}pass$c_normal"
-    if [ -f ./tests/$1_ERROR ]; then
-      rm ./tests/$1_ERROR
+    if [ -f ./test-advanced/tests/$1_ERROR ]; then
+      rm ./test-advanced/tests/$1_ERROR
     fi
    else
     printf " + OUTPUT: ${c_red}FAIL$c_normal"
     fail=$[$fail+2];
-    $INTERPRET $TASK --input=./tests/$1 --output=./tests/$1_ERROR $3
+    $INTERPRET $TASK --input=./test-advanced/tests/$1 --output=./test-advanced/tests/$1_ERROR $3
    fi
  fi
  printf "\t\t$1 $3\n"
