@@ -84,29 +84,29 @@ class Fsm:
         determinizedFinalStates = list()
         newStates = []
         newStates.append(self.__initState)
-        end = False
 
         while len(newStates) > 0:
             mergedState = newStates.pop()
             determinizedStates.append(mergedState)
-            end = False
             temporaryRules = {}
 
-            for state in mergedState.split('_'):
-                if state in self.__finishStates:
-                   end = True
+            divisionStates = mergedState.split('_')
 
-                for symbol, toStates in dictionary[state].items():
+            for state in divisionStates:
+                if state in self.__finishStates:
+                   determinizedFinalStates.append(mergedState)
+
+                for symbol in dictionary[state]:
+                    toStates = dictionary[state][symbol]
                     temporaryRules.setdefault(symbol,set()).update(toStates)
 
-            for symbol, toStates in temporaryRules.items():
-                mergedToStates = '_'.join(sorted(toStates))
-                determinizedRules.setdefault(mergedState,{})[symbol]=mergedToStates
+            for symbol in temporaryRules:
+                toJoin = sorted(temporaryRules[symbol])
+                joinState = '_'.join(toJoin)
+                determinizedRules.setdefault(mergedState,{})[symbol]=joinState
 
-                if mergedToStates not in determinizedStates:
-                    newStates.append(mergedToStates)
-            if end:
-                determinizedFinalStates.append(mergedState)
+                if joinState not in determinizedStates:
+                    newStates.append(joinState)
 
         self.__finishStates = determinizedFinalStates
 
