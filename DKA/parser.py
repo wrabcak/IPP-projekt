@@ -365,14 +365,14 @@ class Parser:
         index = index + 1
         index = self.__skip(index)
 
-        if self.inputFile[index] == '{':
+        if self.inputFile[index] == '{': # next list are list of final states
             index = index +1
             index = self.__skip(index)
 
             if self.inputFile[index] == '}':
                 index = index + 1
             else:
-                index = self.__getFinishStates(index)
+                index = self.__getFinishStates(index) # if list of final states are not empty, load all final states
         else:
             raise Exception(40)
 
@@ -381,7 +381,7 @@ class Parser:
 
         index = self.__skip(index)
 
-        if self.inputFile[index] == ')':
+        if self.inputFile[index] == ')': # fsm must end with ')' if not or if there any other chars -> syntax error
             try:
                 while True:
                     index = index + 1
@@ -397,17 +397,32 @@ class Parser:
         if self.inputFile[index] != ')':
             raise Exception(40)
 
+    #
+    # Method to get all fsm states
+    #
     def getFsmStates(self):
         return self.__fsmStates
 
+    #
+    # Method to get all fsm rules
+    #
     def getFsmRules(self):
         return self.__fsmRules
 
+    #
+    # Method to get all fsm alphabet
+    #
     def getFsmAlphabet(self):
         return self.__fsmAlphabet
 
+    #
+    # Method to get init fsm state
+    #
     def getFsmInitState(self):
         return self.__fsmInitState
 
+    #
+    # Method to get all fsm final states
+    #
     def getFsmFinishStates(self):
         return self.__fsmFinishStates
