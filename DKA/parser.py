@@ -51,10 +51,13 @@ class Parser:
         return index
 
     def __skip(self,index):
-        while self.inputFile[index].isspace() or self.inputFile[index] == '#':
-            index = self.__skipWhiteSpaces(index)
-            index = self.__skipComments(index)
-        return index
+        try:
+            while self.inputFile[index].isspace() or self.inputFile[index] == '#':
+                index = self.__skipWhiteSpaces(index)
+                index = self.__skipComments(index)
+            return index
+        except:
+            raise Exception(40)
 
     def __getStates(self,index):
         fileLength = self.inputFileLength
@@ -204,7 +207,7 @@ class Parser:
                  index = self.__skip(index)
 
             else:
-                raise Exception(41)
+                raise Exception(40)
 
             actualRule = Rule(fromState,symbol,toState)
             self.__fsmRules.append(actualRule)
@@ -333,6 +336,8 @@ class Parser:
                         return 2
             except:
                     return 1
+        if self.inputFile[index] != ')':
+            raise Exception(40)
 
     def getFsmStates(self):
         return self.__fsmStates
