@@ -57,6 +57,13 @@ class Fsm:
         self.__finishStates = newFinishStates
     def determinize(self):
         dictionary = {}
+
+        if len(self.__rules) == 0:
+            self.__states = self.__initState
+            if self.__initState not in self.__finishStates:
+                self.__finishStates = set()
+            return
+
         for rule in self.__rules:
             fromState = rule.fromState
             symbol = rule.symbol
