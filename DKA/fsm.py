@@ -62,6 +62,8 @@ class Fsm:
             self.__states = self.__initState
             if self.__initState not in self.__finishStates:
                 self.__finishStates = set()
+            if self.__initState in self.__finishStates:
+                self.__finishStates = self.__initState
             return
 
         for rule in self.__rules:
