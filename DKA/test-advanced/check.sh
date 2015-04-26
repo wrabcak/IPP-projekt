@@ -139,4 +139,4 @@ passed=0
 failed=0
 
 
-rm ./tests/*.tmp
+rm ./test-advanced/tests/*.tmp
